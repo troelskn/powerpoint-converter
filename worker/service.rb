@@ -48,28 +48,12 @@ module PresentationConverter
       extname = input_file_path.extname
       output_path = Pathname.new(mktmpdir)
 
-      @pp = WIN32OLE.new('PowerPoint.Application')
-      fso = WIN32OLE.new("Scripting.FileSystemObject")
-
       raise "#{input_file_path.to_s} not readable by current process" unless File.readable? input_file_path.to_s
+
+      @pp = WIN32OLE.new('PowerPoint.Application')
 
       verbose "Ensuring destination path"
       FileUtils.mkdir_p output_path
-
-      verbose "Converting full presentation"
-      [['.pptx', :ppSaveAsOpenXMLPresentation], ['.ppt', :ppSaveAsPresentation]].each do |pair|
-        file_name = output_path + ('full' + pair.first)
-        if extname == pair.first
-          verbose "Copying #{pair.first}"
-          FileUtils.copy input_file_path, file_name
-        else
-          fname = fso.GetAbsolutePathName(input_file_path.to_s)
-          verbose "Converting #{pair.first} from #{fname}"
-          presentation = @pp.Presentations.Open(fname)
-          presentation.SaveAs(file_name.to_s, PpSaveAsFileType[pair.last], false)
-          presentation.Close()
-        end
-      end
 
       verbose "Converting individual slides"
       num = 1
@@ -86,7 +70,6 @@ module PresentationConverter
           file_name = output_path + ("slide-" + num.to_s.rjust(3, '0'))
           slides.Item(1).Export(file_name.to_s + ".png", "PNG")
           presentation.SaveAs(file_name.to_s, PpSaveAsFileType[:ppSaveAsPresentation], false)
-          presentation.SaveAs(file_name.to_s, PpSaveAsFileType[:ppSaveAsOpenXMLPresentation], false)
         end
         presentation.Close()
         num = num + 1
