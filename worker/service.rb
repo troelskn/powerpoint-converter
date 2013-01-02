@@ -55,6 +55,8 @@ module PresentationConverter
       verbose "Ensuring destination path"
       FileUtils.mkdir_p output_path
 
+      output_path = output_path.realdirpath
+
       verbose "Converting individual slides"
       num = 1
       loop do
@@ -62,7 +64,7 @@ module PresentationConverter
         presentation = @pp.Presentations.Open(input_file_path.to_s)
         slides = presentation.Slides
         is_last = slides.Count == num
-        if slides.Count <= num
+        if num <= slides.Count
           slides.Item(num).MoveTo(1)
           while slides.Count > 1 do
             slides.Item(2).Delete()
