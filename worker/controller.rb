@@ -28,9 +28,17 @@ module PresentationConverter
         post_body = []
         boundary = (0...50).map{ ('a'..'z').to_a[rand(26)] }.join
         Dir.glob((output + '*').to_s) do |file|
+          mimetype = case File.extname(file)
+                     when '.ppt'
+                       'application/vnd.ms-powerpoint'
+                     when '.png'
+                       'image/png'
+                     else
+                       'applicaton/octet-stream'
+                     end
           post_body << "--#{boundary}\r\n"
           post_body << "Content-Disposition: form-data; name=\"datafile[#{File.basename(file)}]\"; filename=\"#{File.basename(file)}\"\r\n"
-          post_body << "Content-Type: applicaton/octet-stream\r\n"
+          post_body << "Content-Type: #{mimetype}\r\n"
           post_body << "\r\n"
           post_body << File.read(file)
           post_body << "\r\n"
