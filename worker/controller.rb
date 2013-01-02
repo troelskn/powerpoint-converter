@@ -39,8 +39,9 @@ module PresentationConverter
           post_body << "--#{boundary}\r\n"
           post_body << "Content-Disposition: form-data; name=\"datafile[#{File.basename(file)}]\"; filename=\"#{File.basename(file)}\"\r\n"
           post_body << "Content-Type: #{mimetype}\r\n"
+          post_body << "Content-Transfer-Encoding: binary\r\n"
           post_body << "\r\n"
-          post_body << File.read(file)
+          post_body << File.open(file, 'rb') {|f| f.read }
           post_body << "\r\n"
         end
         post_body << "--#{boundary}--\r\n"
