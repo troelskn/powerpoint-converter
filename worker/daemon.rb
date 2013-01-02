@@ -36,7 +36,7 @@ else
              rescue Errno::ENOENT => ex
                {}
              end
-    $config = {'log_file' => "c:\\test.log", 'url' => "http://192.168.1.36/ppt-hub", 'frequency' => 3}.merge($config)
+    $config = {'log_file' => File.dirname(__FILE__) + "\\daemon.log", 'url' => "http://192.168.1.2:3000/conversions/fetch", 'frequency' => 3}.merge($config)
     $controller = PresentationConverter::ClientController.new($config['url'], PresentationConverter::Service.new)
 
     $stdout.reopen($config['log_file'], "a")
