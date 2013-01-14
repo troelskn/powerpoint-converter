@@ -37,7 +37,7 @@ else
                {}
              end
     $config = {'log_file' => File.dirname(__FILE__) + "\\daemon.log", 'url' => "http://192.168.1.2:3000/conversions/fetch", 'frequency' => 3}.merge($config)
-    $controller = PresentationConverter::ClientController.new($config['url'], PresentationConverter::Service.new)
+    $controller = PresentationConverter::ClientController.new($config['url'], PresentationConverter::Service.new, $config['log_http'] ? $stdout : nil)
 
     $stdout.reopen($config['log_file'], "a")
     $stdout.sync = true

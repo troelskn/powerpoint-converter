@@ -4,16 +4,26 @@ require 'json'
 require 'base64'
 require 'fileutils'
 
+module Net
+  class HTTP
+    def debug_output=(io)
+      @debug_output = io
+    end
+  end
+end
+
 module PresentationConverter
   class ClientController
 
-    def initialize(uri, converter)
+    def initialize(uri, converter, wiredump = nil)
       @uri = URI.parse(uri)
       @converter = converter
+      @wiredump = wiredump
     end
 
     def process_next
       http = Net::HTTP.new(@uri.host, @uri.port)
+      http.debug_output = @wiredump
       request = Net::HTTP::Post.new(@uri.request_uri)
       request["Content-Length"] = "0"
       response = http.request(request)
